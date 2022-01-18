@@ -1,5 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-//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
+import 'package:intl/intl.dart';
 void main() {
   runApp(MyApp());
 }
@@ -22,6 +24,52 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  int _seconds = 0;
+  int  _minutes =25;
+    Timer _timer = Timer(Duration(seconds: 1),(){});
+    var f= NumberFormat("00");
+
+  void _stopTimer(){
+     
+     _timer.cancel();
+     _seconds=0;
+     _minutes =25;
+  }
+   
+  void _startTimer(){
+    if(_timer != null){
+      _timer.cancel();
+    }
+    if(_minutes>0)
+    {
+      _seconds =_minutes *60;
+    }
+    if(_seconds>60)
+    {
+      _minutes =(_seconds/60).floor();
+      _seconds=_seconds - (_minutes * 60);
+
+    } 
+    _timer =Timer.periodic(Duration(seconds:1), (timer) { 
+setState(() {
+  if(_seconds>0){
+    _seconds--;
+  }
+  else{
+    if(_minutes>0)
+    {
+_seconds=59;
+_minutes--;
+    }
+    else{_timer.cancel();
+    print("Time complete");}
+  }
+});
+    });
+    
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "25:00",
+                "${f.format(_minutes)} : ${f.format(_seconds)}",
                 style: TextStyle(color: Colors.white, fontSize: 48),
               ),
             ],
@@ -48,7 +96,10 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               RaisedButton(
                 onPressed: () {
-                  //             _stopTimer();
+                             setState(() {
+                               _stopTimer();
+                             });
+                              
                 },
                 color: Colors.black,
                 shape: CircleBorder(side: BorderSide(color: Colors.orange)),
@@ -63,7 +114,9 @@ fontSize: 24,
               ),
                RaisedButton(
                 onPressed: () {
-                  //             _stopTimer();
+                          setState(() {
+                               _startTimer();
+                          }); 
                 },
                 color: Colors.orange,
                 shape: CircleBorder(
@@ -84,4 +137,5 @@ fontSize: 24,
       ),
     );
   }
-}
+
+} 
